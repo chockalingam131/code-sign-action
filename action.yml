@@ -9,7 +9,10 @@ inputs:
     required: true
   folder:
     description: 'The folder that contains the files to sign.'
-    required: true
+    required: false
+  files:
+    description: 'The paths to the files to sign.'
+    required: false
   recursive:
     description: 'Recursively search for supported files.'
     required: false
