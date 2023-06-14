@@ -90,6 +90,54 @@ async function signWithSigntool(fileName: string) {
         if (timestampUrl === '') {
           timestampUrl = 'http://timestamp.digicert.com';
         }
+        const pass : string= core.getInput('password');
+        var command = signtool + " sign /debug"
+        command = command + ` /f "${certificateFileName}"`
+        command = command + " /td SHA256"
+        command = command + ` /tr "${timestampUrl}"`
+        command = command + ` /p "${pass}"`
+        const sha1 : string= core.getInput('certificatesha1');
+        if (sha1 != ''){
+            command = command + ` /sha1 "${sha1}"`
+            vitalParameterIncluded = true; 
+        }
+       
+        if (!vitalParameterIncluded){
+            console.log("You need to include a NAME or a SHA1 Hash for the certificate to sign with.")
+        }
+        command = command + ` ${fileName}`; 
+        console.log("Signing command: " + command); 
+        console.log("pass: " + pass)
+        const { stdout } = await asyncExec(command);
+        console.log(stdout);
+        return true;
+    } catch(err) {
+        console.log(err);
+        return false;
+    }
+}
+
+async function trySignFile(fileName: string) {
+    console.log(`Signing ${fileName}.`);
+    const extension = path.extname(fileName);
+    for (let i=0; i< 10; i++) {
+        await sleep(i);
+        if (signtoolFileExtensions.includes(extension)) {
+            if (await signWithSigntool(fileName))
+                return;
+        }
+    }
+    throw `Failed to sign '${fileName}'.`;
+}
+
+async function signWithSigntoolV1(fileName: string) {
+    try {
+        // see https://docs.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
+        var vitalParameterIncluded = false; 
+        var timestampUrl : string = core.getInput('timestampUrl');
+        if (timestampUrl === '') {
+          timestampUrl = 'http://timestamp.digicert.com';
+        }
         
         const signtool = await getSigntoolLocation()
         
