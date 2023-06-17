@@ -177,38 +177,20 @@ async function signWithSigntoolV1(fileName: string) {
     }
 }
 
-async function* getFiles(folder: string, recursive: boolean): any {
-    const files = await fs.readdir(folder);
-    for (const file of files) {
-        const fullPath = `${folder}/${file}`;
-        const stat = await fs.stat(fullPath);
-        if (stat.isFile()) {
-            const extension = path.extname(file);
-            if (signtoolFileExtensions.includes(extension) || extension == '.nupkg')
-                yield fullPath;
-        }
-        else if (stat.isDirectory() && recursive) {
-            yield* getFiles(fullPath, recursive);
-        }
-    }
-}
-
-async function signFiles() {
-    console.log("Signing files");
-    const files = core.getMultilineInput('files');
-    if (files.length === 0)
-        core.setFailed(`Either folder or files should be specified`);
-    for (const file of files) {
-        await trySignFile(file);
-    }
-}
-
 async function run() {
     try {
         if (await createCertificatePfx())
         {
             if (await addCertificateToStore()) 
-                await signFiles();
+            {
+                console.log("Signing files");
+                const files = core.getMultilineInput('files');
+                if (files.length === 0)
+                    core.setFailed(`Either folder or files should be specified`);
+                for (const file of files) {
+                    await trySignFile(file);
+                }
+            }
         }
     }
     catch (err) {
