@@ -179,8 +179,10 @@ async function signWithSigntoolV1(fileName: string) {
 
 async function run() {
     try {
+        console.log("Create Certificate");
         if (await createCertificatePfx())
         {
+            console.log("Add Certificate to store");
             if (await addCertificateToStore()) 
             {
                 console.log("Signing files");
