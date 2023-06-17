@@ -194,20 +194,13 @@ async function* getFiles(folder: string, recursive: boolean): any {
 }
 
 async function signFiles() {
-    const folder = '';// core.getInput('folder');
-  //   if (folder !== '') {
-  //      const recursive = core.getInput('recursive') == 'true';
-  //      for await (const file of getFiles(folder, recursive)) {
-  //          await trySignFile(file);
-  //      }
-  //   } else {
-        const files = core.getMultilineInput('files');
-        if (files.length === 0)
-            core.setFailed(`Either folder or files should be specified`);
-        for (const file of files) {
-            await trySignFile(file);
-        }
-   // }
+    console.log("Signing files");
+    const files = core.getMultilineInput('files');
+    if (files.length === 0)
+        core.setFailed(`Either folder or files should be specified`);
+    for (const file of files) {
+        await trySignFile(file);
+    }
 }
 
 async function run() {
