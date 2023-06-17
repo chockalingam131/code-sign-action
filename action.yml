@@ -9,7 +9,7 @@ inputs:
     required: true
   files:
     description: 'The paths to the files to sign.'
-    required: false
+    required: true
   recursive:
     description: 'Recursively search for supported files.'
     required: false
