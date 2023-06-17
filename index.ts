@@ -194,7 +194,7 @@ async function* getFiles(folder: string, recursive: boolean): any {
 }
 
 async function signFiles() {
-    const folder = core.getInput('folder');
+    const folder = '';// core.getInput('folder');
      if (folder !== '') {
         const recursive = core.getInput('recursive') == 'true';
         for await (const file of getFiles(folder, recursive)) {
